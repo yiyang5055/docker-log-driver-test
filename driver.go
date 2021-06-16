@@ -11,13 +11,13 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/containerd/fifo"
 	"github.com/docker/docker/api/types/plugins/logdriver"
 	"github.com/docker/docker/daemon/logger"
 	"github.com/docker/docker/daemon/logger/jsonfilelog"
 	protoio "github.com/gogo/protobuf/io"
 	"github.com/pkg/errors"
-	"github.com/tonistiigi/fifo"
+	"github.com/sirupsen/logrus"
 )
 
 type driver struct {
@@ -49,7 +49,7 @@ func (d *driver) StartLogging(file string, logCtx logger.Info) error {
 	d.mu.Unlock()
 
 	if logCtx.LogPath == "" {
-		logCtx.LogPath = filepath.Join("/var/log/docker", logCtx.ContainerID)
+		logCtx.LogPath = filepath.Join("/var/log/tmp/docker", logCtx.ContainerID)
 	}
 	if err := os.MkdirAll(filepath.Dir(logCtx.LogPath), 0755); err != nil {
 		return errors.Wrap(err, "error setting up logger dir")
